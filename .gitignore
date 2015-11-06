@@ -34,7 +34,8 @@ build/
 # unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
 .rvmrc
 
-# ignore passenger.conf
+# ignore conf files
+nginx/cache_controller.conf
 nginx/passenger.conf
 nginx/logging.conf
 nginx/proxy.conf
