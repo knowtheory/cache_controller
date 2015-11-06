@@ -41,3 +41,4 @@ nginx/passenger.conf
 nginx/pid.conf
 nginx/proxy.conf
 log/nginx
+log/*.log

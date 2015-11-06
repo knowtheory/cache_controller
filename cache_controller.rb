@@ -7,9 +7,17 @@ require "sinatra/reloader"
 
 class CacheController < Sinatra::Base
   
-  set :protection, :except => :frame_options
-  enable :logging
-  register Sinatra::Reloader
+  configure do
+    set :protection, :except => :frame_options
+
+    enable :logging, :dump_errors
+    file = File.new("#{settings.root}/log/#{settings.environment}.log", 'a+')
+    file.sync = true
+    use Rack::CommonLogger, file
+
+    set :raise_errors, true
+    register Sinatra::Reloader
+  end
 
   get '/' do
     "Hello"
