@@ -2,7 +2,7 @@ require 'tilt/erb'
 
 @here = File.dirname(__FILE__)
 def render_conf(file, data_binding)
-  template = File.read(File.join(@here, 'nginx', "#{file}.conf.erb"))
+  template = File.read(File.join(@here, 'nginx', 'templates', "#{file}.conf.erb"))
   ERB.new(template).result data_binding
 end
 
