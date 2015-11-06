@@ -1,24 +1,26 @@
+require 'tilt/erb'
+
+@here = File.dirname(__FILE__)
+def render_conf(file, data_binding)
+  template = File.read(File.join(@here, 'nginx', "#{file}.conf.erb"))
+  ERB.new(template).result data_binding
+end
+
 task :build_config do
-  File.open('./nginx/passenger.conf', 'w') do |file| 
-    file.puts <<-PASSENGER_CONFIG
-passenger_root           #{`passenger-config about root`.chomp};
-passenger_ruby           #{`passenger-config about ruby-command`.match(/passenger_ruby (\S+)/)[1].chomp};
-passenger_pool_idle_time 0;
-passenger_max_pool_size  4;
-PASSENGER_CONFIG
+  File.open('./nginx/passenger.conf', 'w') do |file|
+    passenger_root = `passenger-config about root`.chomp
+    passenger_ruby = `passenger-config about ruby-command`.match(/passenger_ruby (\S+)/)[1].chomp
+    file.puts render_conf('passenger', binding)
   end
   
   File.open('./nginx/proxy.conf', 'w') do |file|
-    file.puts <<-PROXY_CONF
-proxy_cache_path #{Dir.pwd}/tmp/data/ keys_zone=one:10m loader_threshold=300 loader_files=200;
-PROXY_CONF
+    here = @here
+    file.puts render_conf('proxy', binding)
   end
   
   File.open('./nginx/logging.conf', 'w') do |file|
-    file.puts <<-LOGGING_CONF
-error_log   #{Dir.pwd}/log/nginx/error.log;
-access_log  #{Dir.pwd}/log/nginx/access.log;
-LOGGING_CONF
+    here = @here
+    file.puts render_conf('logging', binding)
   end
 end
 
