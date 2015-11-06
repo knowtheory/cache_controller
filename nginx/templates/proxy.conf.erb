@@ -10,9 +10,15 @@ server {
   }
 }
 
-#server {
-#  listen 443;
-#  ssl    on;
-#  ssl_certificate     <%= certificate_path %>
-#  ssl_certificate_key <%= certificate_key_path %>
-#}
+server {
+  listen 443;
+  server_name cachecontroller.dev;
+
+  location / {
+    proxy_pass http://localhost:8765;
+  }
+
+  ssl    on;
+  ssl_certificate     <%= certificate_path %>;
+  ssl_certificate_key <%= certificate_key_path %>;
+}

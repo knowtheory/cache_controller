@@ -15,8 +15,8 @@ task :build_config do
   
   File.open('./nginx/proxy.conf', 'w') do |file|
     here = @here
-    certificate_path     = ""
-    certificate_key_path = ""
+    certificate_path     = File.join @here, 'nginx', 'cert', 'cachecontroller.dev.crt'
+    certificate_key_path = File.join @here, 'nginx', 'cert', 'cachecontroller.dev.key'
     file.puts render_conf('proxy', binding)
   end
   
