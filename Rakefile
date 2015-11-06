@@ -15,6 +15,8 @@ task :build_config do
   
   File.open('./nginx/proxy.conf', 'w') do |file|
     here = @here
+    certificate_path     = ""
+    certificate_key_path = ""
     file.puts render_conf('proxy', binding)
   end
   
@@ -22,6 +24,17 @@ task :build_config do
     here = @here
     file.puts render_conf('logging', binding)
   end
+
+  File.open('./nginx/cache_controller.conf', 'w') do |file|
+    here = @here
+    file.puts render_conf('cache_controller', binding)
+  end
+  
+  File.open('./nginx/pid.conf', 'w') do |file|
+    here = @here
+    file.puts render_conf('pid', binding)
+  end
+  
 end
 
 task :start do

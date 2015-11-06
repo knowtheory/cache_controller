@@ -1,2 +1,18 @@
 proxy_cache_path <%= here %>/tmp/data/
                  keys_zone=one:10m loader_threshold=300 loader_files=200;
+
+server {
+  listen 80;
+  server_name cachecontroller.dev;
+  
+  location / {
+    proxy_pass http://localhost:8765;
+  }
+}
+
+#server {
+#  listen 443;
+#  ssl    on;
+#  ssl_certificate     <%= certificate_path %>
+#  ssl_certificate_key <%= certificate_key_path %>
+#}

@@ -36,7 +36,8 @@ build/
 
 # ignore conf files
 nginx/cache_controller.conf
-nginx/passenger.conf
 nginx/logging.conf
+nginx/passenger.conf
+nginx/pid.conf
 nginx/proxy.conf
 log/nginx
