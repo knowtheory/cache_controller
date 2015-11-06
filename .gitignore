@@ -36,3 +36,6 @@ build/
 
 # ignore passenger.conf
 nginx/passenger.conf
+nginx/logging.conf
+nginx/proxy.conf
+log/nginx
