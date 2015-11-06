@@ -23,7 +23,19 @@ class CacheController < Sinatra::Base
     "Hello"
   end
   
+  get '/404' do
+    status 404
+  end
+  
+  get '/500' do
+    status 500
+  end
+  
   not_found do
     "Can't find this page"
+  end
+  
+  error 500 do
+    "This is a 500 error"
   end
 end
