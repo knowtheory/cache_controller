@@ -51,6 +51,15 @@ task :stop do
   `sudo nginx -c #{Dir.pwd}/nginx/nginx.conf -s stop`
 end
 
+task :restart do
+  Rake::Task['stop'].invoke
+  Rake::Task['start'].invoke
+end
+
 task :reload do
   `sudo nginx -c #{Dir.pwd}/nginx/nginx.conf -s reload`
+end
+
+task :ab do
+  puts `ab -c 10 -n 1000 https://cachecontroller.dev/data.json`
 end

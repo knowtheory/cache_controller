@@ -6,11 +6,14 @@ require 'sinatra/base'
 require "sinatra/reloader"
 
 class CacheController < Sinatra::Base
-  
+
+  use Rack::ETag
+
   configure do
     set :protection, :except => :frame_options
 
-    enable :logging, :dump_errors
+    enable :inline_templates
+
     file = File.new("#{settings.root}/log/#{settings.environment}.log", 'a+')
     file.sync = true
     use Rack::CommonLogger, file
@@ -20,7 +23,20 @@ class CacheController < Sinatra::Base
   end
 
   get '/' do
-    "Hello"
+    sleep 1
+    cache_control :public, :must_revalidate, :max_age => 60
+    erb :index, :locals => { :message => "Hello" }
+  end
+  
+  get '/data.json' do
+    content_type :json
+    cache_control :public, :must_revalidate, :max_age => 10
+    sleep 0.25
+    now = Time.now
+    data = { 
+      :color => ((now.sec/10) % 2 == 0 ? "red" : "blue"),
+    }
+    data.to_json
   end
   
   get '/404' do
@@ -39,3 +55,15 @@ class CacheController < Sinatra::Base
     "This is a 500 error"
   end
 end
+
+__END__
+@@ layout
+<html>
+<head><title>CacheController</title></head>
+<body>
+  <%= yield %>
+</body>
+</html>
+
+@@ index
+<h1><%= message %></h1>
