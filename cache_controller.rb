@@ -24,19 +24,26 @@ class CacheController < Sinatra::Base
 
   get '/' do
     sleep 1
-    cache_control :public, :must_revalidate, :max_age => 60
+    #cache_control :public, :must_revalidate, :max_age => 60
     erb :index, :locals => { :message => "Hello" }
   end
   
   get '/data.json' do
     content_type :json
-    cache_control :public, :must_revalidate, :max_age => 10
-    sleep 0.25
+    #cache_control :public, :must_revalidate, :max_age => 10
+    #cache_control :nocache
+    sleep 1
     now = Time.now
     data = { 
       :color => ((now.sec/10) % 2 == 0 ? "red" : "blue"),
     }
-    data.to_json
+    response = data.to_json
+    response = "#{params["callback"]}(#{response})" if params["callback"]
+    response
+  end
+  
+  get '/set_cookie' do
+    
   end
   
   get '/404' do

@@ -61,5 +61,5 @@ task :reload do
 end
 
 task :ab do
-  puts `ab -c 10 -n 1000 https://cachecontroller.dev/data.json`
+  puts `ab -c 50 -n 10000 https://cachecontroller.dev/data.json`
 end
