@@ -27,9 +27,9 @@ class CacheController < Sinatra::Base
     erb :index, :locals => { :message => "Hello" }
   end
   
-  def json_data(callback=nil)
+  def json_data(data={},callback=nil)
     now = Time.now
-    data = { :color => ((now.sec/10) % 2 == 0 ? "red" : "blue"), }
+    data[:color] = ((now.sec/10) % 2 == 0 ? "red" : "blue")
     resp = data.to_json
     resp = "#{params["callback"]}(#{response})" if params["callback"]
     resp
@@ -40,7 +40,10 @@ class CacheController < Sinatra::Base
     #cache_control :public, :must_revalidate, :max_age => 10
     #cache_control :nocache
     sleep (params[:delay].to_i || 0)
-    json_data(params[:callback])
+    data = {}
+    cookie = request.cookies['cookie']
+    data[:cookie] = cookie if cookie
+    json_data(data, params[:callback])
   end
   
   get '/cookie' do
@@ -123,3 +126,4 @@ $$$$$$$$$P??"3$$P??$$" ,$$$FJ?$$$$$$$$$$cc,,. ,,.  =$$$$$$$$$$$$$$$$$$$$$$
 $$$$$$$$$hc$$$$$r$P"'  $$$$."-3$$$$$$$$$$$$$"$"$$$c, ""????$$$$$$$$$$$$$$$
 $$$$$3$$$$$$$h.zccc$$ ,$$$$L`,$$$$$$$$$$$$$L,"- $$$$$cc -cc??)$$$$$$$$$$$$
 </pre>
+
