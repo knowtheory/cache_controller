@@ -30,6 +30,7 @@ class CacheController < Sinatra::Base
   def json_data(data={},callback=nil)
     now = Time.now
     data[:color] = ((now.sec/10) % 2 == 0 ? "red" : "blue")
+    data[:time] = now
     resp = data.to_json
     resp = "#{params["callback"]}(#{response})" if params["callback"]
     resp
@@ -37,25 +38,29 @@ class CacheController < Sinatra::Base
   
   get '/data.json' do
     content_type :json
-    #cache_control :public, :must_revalidate, :max_age => 10
+    cache_control :public, :must_revalidate, :max_age => 60
     #cache_control :nocache
     sleep (params[:delay].to_i || 0)
     data = {}
-    cookie = request.cookies['cookie']
-    data[:cookie] = cookie if cookie
+    cookie_name = (params["name"] || "cookie")
+    cookie = request.cookies[cookie_name]
+    data[cookie_name] = cookie if cookie
+    #data["cookie_name"] = cookie_name
     json_data(data, params[:callback])
   end
   
-  get '/cookie' do
-    value = (params["cookie"] || "cookie")
-    response.set_cookie "cookie", { :value => value, :max_age => 60*60*24*7 }
-    erb :cookie, :locals => { :message => value }
+  get '/cookies' do
+    name  = (params["name"] || "cookie")
+    value = (params["value"] || "delicious")
+    response.set_cookie name, { :value => value, :max_age => 60*60*24*7 }
+    erb :cookie, :locals => { :value => value, :name => name }
   end
   
-  delete '/cookie' do
-    cookies.clear
+  get '/delete_cookies' do
+    request.cookies.keys.reject{ |key| key == "rack.session" }.each{ |key| response.delete_cookie key }
+    "Cookies cleared"
   end
-
+  
   not_found do
     "Can't find this page"
   end
@@ -78,8 +83,8 @@ __END__
 <h1><%= message %></h1>
 
 @@ cookie
-<h1>COOKIES TASTE LIKE <%= message.upcase %></h1>
-<p>(okay the cookie was specifically set to "<%= message %>")</p>
+<h1>COOKIES TASTE LIKE <%= value.upcase %></h1>
+<p>(okay the cookie <%= name %> was specifically set to "<%= value %>")</p>
 <pre>
                                     .,.
                                 ,nMMMMMMb.
