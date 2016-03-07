@@ -32,7 +32,7 @@ class CacheController < Sinatra::Base
     data[:color] = ((now.sec/10) % 2 == 0 ? "red" : "blue")
     data[:time] = now
     resp = data.to_json
-    resp = "#{params["callback"]}(#{response})" if params["callback"]
+    resp = "#{params["callback"]}(#{resp});" if params["callback"]
     resp
   end
   
